@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension engine="1.0">
+	<id>mod_bbcode_ninja</id>
+	<title>BBCode Ninja</title>
+	<version>1.2</version>
+	<description>BBCode [ninja]</description>
+	<author>David Keller &amp; rain</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+	<install>
+	</install>
+
+	<hooks>
+		<hook id="es_essentials"><![CDATA[
+function can_user_see_ninja($user)
+{
+    switch ($user['g_id']) {
+        case FORUM_ADMIN:
+        case 4:
+        case 5:
+        case 24:
+            return true;
+        default:
+            return $user['is_admmod'];
+    }
+}
+		]]></hook>
+
+		<hook id="ps_start"><![CDATA[
+function handle_ninja_tag($text)
+{
+    $text = "</p><div class=\"quotebox\"><cite>Ninja:</cite><blockquote><p><i>$text</i></p></blockquote></div><p>";
+	return forum_trim($text);
+}
+		]]></hook>
+
+        <hook id='ps_preparse_tags_start'><![CDATA[
+$tags[] = 'ninja';
+$tags_fix[] = 'ninja';
+$tags_block[] = 'ninja';
+        ]]></hook>
+
+		<hook id="ps_do_bbcode_replace"><![CDATA[
+if(can_user_see_ninja($forum_user)) {
+    $pattern_callback[] = '#\[ninja\]([^\[]+)\[/ninja\]#';
+    $replace_callback[] = 'handle_ninja_tag($matches[1])';
+} else {
+    $pattern[] = '#\[ninja\]([^\[]+)\[/ninja\]#';
+    $replace[] = '';
+}
+		]]></hook>
+
+        <!-- pun_bbcode - add button -->
+        <hook id="pun_bbcode_pre_buttons_output"><![CDATA[
+if(can_user_see_ninja($forum_user) && forum_user['pun_bbcode_use_buttons']) {
+    $this->add_button(array('name'	=> 'ninja', 'title' => 'ninja', 'tag' => 'ninja', 'image' => true));
+}
+        ]]></hook>
+        
+        <!-- pun_bbcode - add styles for button -->
+        <hook id="pun_bbcode_styles_loaded"><![CDATA[
+if (can_user_see_ninja($forum_user) && $forum_user['pun_bbcode_use_buttons']) {
+    $button_ninja_css = '#pun_bbcode_bar #pun_bbcode_button_ninja.image { background: url("'.$ext_info['url'].'/ninja.png") 50% 50% no-repeat; }';
+    $forum_loader->add_css($button_ninja_css, array('type' => 'inline'));
+}
+        ]]></hook>
+    </hooks>
+</extension>
