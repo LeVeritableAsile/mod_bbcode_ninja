@@ -52,7 +52,7 @@ if(can_user_see_ninja($forum_user)) {
 
         <!-- pun_bbcode - add button -->
         <hook id="pun_bbcode_pre_buttons_output"><![CDATA[
-if(can_user_see_ninja($forum_user) && forum_user['pun_bbcode_use_buttons']) {
+if(can_user_see_ninja($forum_user) && $forum_user['pun_bbcode_use_buttons']) {
     $this->add_button(array('name'	=> 'ninja', 'title' => 'ninja', 'tag' => 'ninja', 'image' => true));
 }
         ]]></hook>
